@@ -21,6 +21,12 @@ public class WeightedGraph {
 			weight = w;
 		}
 
+		Edge(Edge e) {
+			from = e.from;
+			to = e.to;
+			weight = e.weight;
+		}
+
 		Edge reverse() {
 			return new Edge(to, from, weight);
 		}
@@ -36,10 +42,23 @@ public class WeightedGraph {
 		long cost;
 		int trees;
 
+		MST(int V) {
+			adj = new List[V];
+			for (int i = 0; i < adj.length; i++)
+				adj[i] = new ArrayList<>();
+			cost = 0;
+			trees = 0;
+		}
+
 		MST(long c, List<Edge>[] adj, int tree) {
 			cost = c;
 			this.adj = adj;
 			trees = tree;
+		}
+
+		void addEdge(Edge e) {
+			adj[e.to].add(new Edge(e));
+			adj[e.from].add(new Edge(e.reverse()));
 		}
 	}
 
@@ -74,16 +93,11 @@ public class WeightedGraph {
 
 	MST primMST() {
 		boolean[] visited = new boolean[V];
-		List<Edge>[] mst = new List[V];
-		for (int i = 0; i < V; i++) {
-			mst[i] = new ArrayList<>();
-		}
-		long cost = 0;
-		int trees = 0;
+		MST mst = new MST(V);
 		for (int start = 0; start < V; start++) {
 			if (visited[start])
 				continue;
-			trees++;
+			mst.trees++;
 			Queue<Edge> queue = new PriorityQueue<>((a, b) -> a.weight - b.weight);
 			queue.addAll(adj[start]);
 			visited[start] = true;
@@ -91,42 +105,35 @@ public class WeightedGraph {
 				Edge curr = queue.poll();
 				if (visited[curr.to])
 					continue;
-				Edge to = new Edge(curr.from, curr.to, curr.weight);
-				Edge from = new Edge(curr.to, curr.from, curr.weight);
-				mst[curr.from].add(to);
-				mst[curr.to].add(from);
+				mst.addEdge(curr);
 				visited[curr.to] = true;
-				cost += curr.weight;
+				mst.cost += curr.weight;
 				for (Edge e : adj[curr.to]) {
 					if (!visited[e.to])
 						queue.add(e);
 				}
 			}
 		}
-		return new MST(cost, mst, trees);
+		return mst;
 	}
 
 	MST kruskulMST() {
 		UnionFind uf = new UnionFind(V);// separate class
 		edges.sort((a, b) -> a.weight - b.weight);
-		List<Edge>[] mst = new List[V];
-		for (int i = 0; i < V; i++) {
-			mst[i] = new ArrayList<>();
-		}
 		int edgeCount = 0;
-		long cost = 0;
+		MST mst = new MST(V);
 		for (Edge e : edges) {
 			if (edgeCount == V - 1) {
 				break;
 			}
 			if (uf.union(e.from, e.to)) {
-				mst[e.from].add(e);
-				mst[e.to].add(e.reverse());
-				cost += e.weight;
+				mst.addEdge(e);
+				mst.cost += e.weight;
 				edgeCount++;
 			}
 		}
-		return new MST(cost, mst, V - edgeCount);
+		mst.trees = V - edgeCount;
+		return mst;
 	}
 
 	Path dijkstra(int src) {
