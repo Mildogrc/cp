@@ -117,7 +117,7 @@ public class WeightedGraph {
 		return mst;
 	}
 
-	MST kruskulMST() {
+	MST kruskalMST() {
 		UnionFind uf = new UnionFind(V);// separate class
 		edges.sort((a, b) -> a.weight - b.weight);
 		int edgeCount = 0;
