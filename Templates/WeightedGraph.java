@@ -57,8 +57,47 @@ public class WeightedGraph {
 		}
 
 		void addEdge(Edge e) {
-			adj[e.to].add(new Edge(e));
-			adj[e.from].add(new Edge(e.reverse()));
+			adj[e.to].add(new Edge(e.to, e.from, e.weight));
+			adj[e.from].add(new Edge(e.from, e.to, e.weight));
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < adj.length; i++) {
+				sb.append(adj[i].toString() + "\n");
+			}
+			return sb.toString();
+		}
+
+		public boolean equals(Object o) {
+			if (o == this) {
+				return true;
+			}
+			if (o instanceof MST) {
+				MST mst = (MST) o;
+				if (this.cost != mst.cost || this.trees != mst.trees)
+					return false;
+				if (mst.adj.length == this.adj.length) {
+					for (int i = 0; i < this.adj.length; i++) {
+						List<Edge> mst1 = new ArrayList<>(mst.adj[i]);
+						List<Edge> mst2 = new ArrayList<>(this.adj[i]);
+						mst1.sort((a, b) -> a.to - b.to);
+						mst2.sort((a, b) -> a.to - b.to);
+						if (mst1.size() != mst2.size()) {
+							return false;
+						}
+						for (int j = 0; j < mst1.size(); j++) {
+							if (mst1.get(j).to != mst2.get(j).to) {
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+			return false;
 		}
 	}
 
@@ -117,7 +156,7 @@ public class WeightedGraph {
 		return mst;
 	}
 
-	MST kruskalMST() {
+	MST kruskulMST() {
 		UnionFind uf = new UnionFind(V);// separate class
 		edges.sort((a, b) -> a.weight - b.weight);
 		int edgeCount = 0;
@@ -179,3 +218,4 @@ public class WeightedGraph {
 		return arr;
 	}
 }
+
