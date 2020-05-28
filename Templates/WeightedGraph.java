@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -103,13 +102,21 @@ public class WeightedGraph {
 
 	static class Path {
 		int src;
-		long[] dist;
+		Long[] dist;
 		int[] pred;
+		boolean[] INF;
 
-		Path(int src, int[] pred, long[] dist) {
+		Path(int src, int[] pred, Long[] dist) {
 			this.src = src;
 			this.pred = pred;
 			this.dist = dist;
+		}
+
+		Path(int src, int[] pred, Long[] dist, boolean[] INF) {
+			this.src = src;
+			this.pred = pred;
+			this.dist = dist;
+			this.INF = INF;
 		}
 
 	}
@@ -123,10 +130,16 @@ public class WeightedGraph {
 	}
 
 	void addEdge(int src, int dest, int weight) {
+		addEdge(src, dest, weight, true);
+	}
+
+	void addEdge(int src, int dest, int weight, boolean bidirectional) {
 		Edge e = new Edge(src, dest, weight);
-		Edge rev = e.reverse();
 		adj[src].add(e);
-		adj[dest].add(rev);
+		if (bidirectional) {
+			Edge rev = e.reverse();
+			adj[dest].add(rev);
+		}
 		edges.add(e);
 	}
 
@@ -176,11 +189,10 @@ public class WeightedGraph {
 	}
 
 	Path dijkstra(int src) {
-		long[] dist = new long[V];
+		Long[] dist = new Long[V];
 		int[] pred = new int[V];
 		boolean[] visited = new boolean[V];
-		Arrays.fill(dist, -1);
-		dist[src] = 0;
+		dist[src] = 0L;
 		pred[src] = -1;
 		Queue<Integer> queue = new PriorityQueue<>((a, b) -> Long.compare(dist[a], dist[b]));
 		queue.add(src);
@@ -193,7 +205,7 @@ public class WeightedGraph {
 				if (visited[child.to])
 					continue;
 				long dgc = dist[node] + child.weight; // dijkstra's greedy criterion
-				if (dist[child.to] == -1 || dgc < dist[child.to]) {
+				if (dist[child.to] == null || dgc < dist[child.to]) {
 					dist[child.to] = dgc;
 					pred[child.to] = node;
 				}
@@ -201,6 +213,39 @@ public class WeightedGraph {
 			}
 		}
 		return new Path(src, pred, dist);
+	}
+
+	Path bellmanFord(int src) {
+		Long[] dist = new Long[V];
+		int[] pred = new int[V];
+		dist[src] = 0L;
+		pred[src] = -1;
+		for (int i = 1; i < V; i++) {
+			boolean done = true;
+			for (Edge e : edges) {
+				if (dist[e.from] != null) {
+					if (dist[e.to] == null) {
+						dist[e.to] = dist[e.from] + e.weight;
+					} else {
+						if (dist[e.to] > dist[e.from] + e.weight) {
+							dist[e.to] = dist[e.from] + e.weight;
+							done = false;
+						}
+					}
+				}
+			}
+			if (done)
+				break;
+		}
+		boolean[] INF = new boolean[V];
+		for (Edge e : edges) {
+			if (dist[e.from] != null) {
+				if (dist[e.to] > dist[e.from] + e.weight) {
+					INF[e.to] = true;
+				}
+			}
+		}
+		return new Path(src, pred, dist, INF);
 	}
 
 	static int[] constructPath(Path p, int dest) {
@@ -218,4 +263,3 @@ public class WeightedGraph {
 		return arr;
 	}
 }
-

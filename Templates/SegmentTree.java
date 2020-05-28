@@ -15,6 +15,7 @@ public class SegmentTree {
 		 * Specify Type of Segment Tree with Comparator E.G.: Min -> (a, b) ->
 		 * Math.min(a, b) Sum -> (a, b) -> a + b ...
 		 */
+		MaxN = arr.length;
 		segtree = new Integer[4 * MaxN];
 		comparator = c;
 		build(arr, 0, 0, MaxN - 1);
