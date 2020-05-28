@@ -1,3 +1,5 @@
+package BaseCodeForCoding;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -226,9 +228,11 @@ public class WeightedGraph {
 				if (dist[e.from] != null) {
 					if (dist[e.to] == null) {
 						dist[e.to] = dist[e.from] + e.weight;
+						pred[e.to] = e.from;
 					} else {
 						if (dist[e.to] > dist[e.from] + e.weight) {
 							dist[e.to] = dist[e.from] + e.weight;
+							pred[e.to] = e.from;
 							done = false;
 						}
 					}
@@ -263,3 +267,4 @@ public class WeightedGraph {
 		return arr;
 	}
 }
+
