@@ -236,8 +236,9 @@ public class WeightedGraph {
 		int[] pred = new int[N];
 		dist[src] = 0L;
 		pred[src] = -1;
+		boolean done = true;
 		for (int i = 1; i < N; i++) {
-			boolean done = true;
+			done = true;
 			for (Edge e : edges) {
 				if (dist[e.u] != null) {
 					if (dist[e.v] == null) {
@@ -256,13 +257,15 @@ public class WeightedGraph {
 				break;
 		}
 		boolean[] INF = new boolean[N];
-		for (Edge e : edges) {
-			if (dist[e.u] != null) {
-				if (dist[e.v] > dist[e.u] + e.w) {
-					INF[e.v] = true;
+		if (!done)
+			for (int i = 0; i < N; i++)
+				for (Edge e : edges) {
+					if (dist[e.u] != null) {
+						if (dist[e.v] > dist[e.u] + e.w) {
+							INF[e.v] = true;
+						}
+					}
 				}
-			}
-		}
 		return new Path(src, pred, dist, INF);
 	}
 
