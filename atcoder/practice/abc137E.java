@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
  
 public class abc137E {
-	static long INF = (long) 1e9 + 7;
+	static long INF = Long.MAX_VALUE >> 1;
  
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -23,11 +23,11 @@ public class abc137E {
 		long[] dist = new long[N];
 		Arrays.fill(dist, -INF);
 		dist[0] = 0;
-		for (int i = 0; i < N; i++) {
-//			System.out.println(Arrays.toString(dist));
-			boolean done = true;
+		boolean done = true;
+		for (int i = 1; i < N; i++) {
+			done = true;
 			for (Edge e : edges) {
-				if (dist[e.v] < dist[e.u] + e.w) {
+				if (dist[e.u] != -INF && dist[e.v] < dist[e.u] + e.w) {
 					dist[e.v] = dist[e.u] + e.w;
 					done = false;
 				}
@@ -35,15 +35,16 @@ public class abc137E {
 			if (done)
 				break;
 		}
-//		System.out.println(Arrays.toString(dist));
-		for (Edge e : edges) {
-			if (e.v == N - 1)
-				if (dist[e.v] < dist[e.u] + e.w) {
-					System.out.println(-1);
-					return;
+		long max = dist[N - 1];
+		if (!done)
+			for (int i = 0; i < N; i++)
+				for (Edge e : edges) {
+					if (dist[e.u] != -INF && dist[e.v] < dist[e.u] + e.w) {
+						dist[e.v] = INF;
+					}
 				}
-		}
-		System.out.println(dist[N - 1] == INF ? -1 : Math.max(0, dist[N - 1]));
+//		System.out.println(Arrays.toString(dist));
+		System.out.println(Math.abs(dist[N - 1]) >= (5e10) ? -1 : Math.max(0, max));
 	}
  
 	static class Edge {
@@ -67,5 +68,6 @@ public class abc137E {
 		public String toString() {
 			return String.format("[%d, %d, %d]", u, v, w);
 		}
+ 
 	}
 }
