@@ -1,13 +1,12 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class WeightedGraph {
 	static long INF = (long) 1e18;
-	int N;
+	int N, M;
 	List<Edge>[] adj;
 	Edge[] edges;
 	int ith;
@@ -15,6 +14,7 @@ public class WeightedGraph {
 
 	WeightedGraph(int V, int E) {
 		N = V;
+		M = E;
 		adj = new List[N];
 		edges = new Edge[E];
 		ith = 0;
@@ -62,7 +62,7 @@ public class WeightedGraph {
 			adj[dest].add(rev);
 		}
 		edges[ith++] = new Edge(src, dest, weight);
-		if (!negative && weight < 0) {
+		if (weight < 0) {
 			negative = true;
 		}
 	}
@@ -186,6 +186,21 @@ public class WeightedGraph {
 			this.pred = pred;
 			this.dist = dist;
 		}
+
+		int[] getPath(int dest) {
+			if (dist[dest] == INF)
+				return null;
+			List<Integer> path = new ArrayList<>();
+			while (dest != -1) {
+				path.add(dest);
+				dest = pred[dest];
+			}
+			int[] arr = new int[path.size()];
+			for (int i = path.size() - 1, j = 0; i >= 0; i--, j++) {
+				arr[j] = path.get(i);
+			}
+			return arr;
+		}
 	}
 
 	Path shortestPath(int src) {// checks if negative and uses correct algo
@@ -235,6 +250,7 @@ public class WeightedGraph {
 			for (Edge e : edges) {
 				if (dist[e.v] > dist[e.u] + e.w) {
 					dist[e.v] = dist[e.u] + e.w;
+					pred[e.v] = e.u;
 					done = false;
 				}
 			}
@@ -242,31 +258,96 @@ public class WeightedGraph {
 				break;
 		}
 		if (!done)
-			for (int i = 0; i < N; i++)
-				for (Edge e : edges) {
-					if (dist[e.u] != INF) {
-						if (dist[e.u] == -INF || dist[e.v] > dist[e.u] + e.w) {
-							dist[e.v] = -INF;
-						}
-					}
-				}
+			negativeCycleCheck(dist);
 		return new Path(src, pred, dist);
 	}
 
-	static int[] constructPath(Path p, int dest) {
-		if (p.dist[dest] == INF)
-			return null;
-		List<Integer> path = new ArrayList<>();
-		int node = p.pred[dest];
-		while (node != -1) {
-			path.add(node);
-			node = p.pred[node];
+	public void negativeCycleCheck(long[] dist) {
+		for (int i = 0; i < N; i++)
+			for (Edge e : edges) {
+				if (dist[e.u] != INF) {
+					if (dist[e.u] == -INF || dist[e.v] > dist[e.u] + e.w) {
+						dist[e.v] = -INF;
+					}
+				}
+			}
+	}
+
+	static class AllPairs {
+		long[][] paths;
+		int[][] B;
+
+		AllPairs(long[][] a, int[][] pred) {
+			paths = a;
+			B = pred;
 		}
-		Collections.reverse(path);
-		int[] arr = new int[path.size()];
-		for (int i = path.size() - 1, j = 0; i >= 0; i--, j++) {
-			arr[j] = path.get(i);
+
+		public int[] getPath(int src, int dest) {
+			Node start = new Node(src);
+			Node end = new Node(dest);
+			start.next = end;
+			createPath(start, end);
+			List<Integer> path = new ArrayList<>();
+			Node p = start;
+			while (p != null) {
+				path.add(p.val);
+				p = p.next;
+			}
+			int[] arr = new int[path.size()];
+			for (int i = 0, j = path.size() - 1; j >= 0 && i < path.size(); i++, j--) {
+				arr[i] = path.get(j);
+			}
+			return arr;
 		}
-		return arr;
+
+		private void createPath(Node start, Node end) {
+			if (B[start.val][end.val] != -1) {
+				Node mid = new Node(B[start.val][end.val]);
+				start.next = mid;
+				mid.next = end;
+				createPath(start, mid);
+				createPath(mid, end);
+			}
+		}
+
+		private class Node {
+			int val;
+			Node next;
+
+			Node(int a) {
+				val = a;
+				next = null;
+			}
+		}
+	}
+
+	public AllPairs floydWarshall() {
+		int[][] B = new int[N][N];
+		long[][] dist = new long[N][N];
+		for (int i = 0; i < N; i++) {
+			Arrays.fill(B[i], -1);
+			Arrays.fill(dist[i], INF);
+		}
+		for (int i = 0; i < N; i++) {
+			dist[i][i] = 0;
+			for (Edge e : adj[i]) {
+				dist[i][e.v] = e.w;
+			}
+		}
+		for (int k = 0; k < N; k++) {
+			for (int u = 0; u < N; u++) {
+				for (int v = 0; v < N; v++) {
+					if (dist[u][k] + dist[k][v] < dist[u][v]) {
+						dist[u][v] = dist[u][k] + dist[k][v];
+						B[u][v] = k;
+					}
+				}
+			}
+		}
+		return new AllPairs(dist, B);
+	}
+
+	private static int log(int i) {
+		return Integer.numberOfTrailingZeros(Integer.highestOneBit((i >> 1 << 1) + 1)) + 1;
 	}
 }
