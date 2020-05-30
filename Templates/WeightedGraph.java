@@ -6,6 +6,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class WeightedGraph {
+	static long INF = (long) 1e18;
 	int N;
 	List<Edge>[] adj;
 	Edge[] edges;
@@ -177,23 +178,14 @@ public class WeightedGraph {
 
 	static class Path {
 		int src;
-		Long[] dist;
+		long[] dist;
 		int[] pred;
-		boolean[] INF;
 
-		Path(int src, int[] pred, Long[] dist) {
+		Path(int src, int[] pred, long[] dist) {
 			this.src = src;
 			this.pred = pred;
 			this.dist = dist;
 		}
-
-		Path(int src, int[] pred, Long[] dist, boolean[] INF) {
-			this.src = src;
-			this.pred = pred;
-			this.dist = dist;
-			this.INF = INF;
-		}
-
 	}
 
 	Path shortestPath(int src) {// checks if negative and uses correct algo
@@ -205,9 +197,10 @@ public class WeightedGraph {
 	}
 
 	Path dijkstra(int src) {
-		Long[] dist = new Long[N];
+		long[] dist = new long[N];
 		int[] pred = new int[N];
 		boolean[] visited = new boolean[N];
+		Arrays.fill(dist, INF);
 		dist[src] = 0L;
 		pred[src] = -1;
 		Queue<Integer> queue = new PriorityQueue<>((a, b) -> Long.compare(dist[a], dist[b]));
@@ -221,7 +214,7 @@ public class WeightedGraph {
 				if (visited[child.v])
 					continue;
 				long dgc = dist[node] + child.w; // dijkstra's greedy criterion
-				if (dist[child.v] == null || dgc < dist[child.v]) {
+				if (dgc < dist[child.v]) {
 					dist[child.v] = dgc;
 					pred[child.v] = node;
 				}
@@ -232,7 +225,7 @@ public class WeightedGraph {
 	}
 
 	Path bellmanFord(int src) {
-		Long[] dist = new Long[N];
+		long[] dist = new long[N];
 		int[] pred = new int[N];
 		dist[src] = 0L;
 		pred[src] = -1;
@@ -240,36 +233,29 @@ public class WeightedGraph {
 		for (int i = 1; i < N; i++) {
 			done = true;
 			for (Edge e : edges) {
-				if (dist[e.u] != null) {
-					if (dist[e.v] == null) {
-						dist[e.v] = dist[e.u] + e.w;
-						pred[e.v] = e.u;
-					} else {
-						if (dist[e.v] > dist[e.u] + e.w) {
-							dist[e.v] = dist[e.u] + e.w;
-							pred[e.v] = e.u;
-							done = false;
-						}
-					}
+				if (dist[e.v] > dist[e.u] + e.w) {
+					dist[e.v] = dist[e.u] + e.w;
+					done = false;
 				}
 			}
 			if (done)
 				break;
 		}
-		boolean[] INF = new boolean[N];
 		if (!done)
 			for (int i = 0; i < N; i++)
 				for (Edge e : edges) {
-					if (dist[e.u] != null) {
-						if (dist[e.v] > dist[e.u] + e.w) {
-							INF[e.v] = true;
+					if (dist[e.u] != INF) {
+						if (dist[e.u] == -INF || dist[e.v] > dist[e.u] + e.w) {
+							dist[e.v] = -INF;
 						}
 					}
 				}
-		return new Path(src, pred, dist, INF);
+		return new Path(src, pred, dist);
 	}
 
 	static int[] constructPath(Path p, int dest) {
+		if (p.dist[dest] == INF)
+			return null;
 		List<Integer> path = new ArrayList<>();
 		int node = p.pred[dest];
 		while (node != -1) {
