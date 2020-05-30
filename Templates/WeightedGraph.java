@@ -276,13 +276,35 @@ public class WeightedGraph {
 	static class AllPairs {
 		long[][] paths;
 		int[][] B;
+		Path[] dijkstraResult;
 
 		AllPairs(long[][] a, int[][] pred) {
 			paths = a;
 			B = pred;
+			dijkstraResult = null;
+		}
+
+		AllPairs(Path[] paths) {
+			dijkstraResult = paths;
+		}
+
+		public long getDist(int src, int dest) {
+			if (dijkstraResult == null) {
+				return paths[src][dest];
+			} else {
+				return dijkstraResult[src].dist[dest];
+			}
 		}
 
 		public int[] getPath(int src, int dest) {
+			if (dijkstraResult == null) {
+				return getFWPath(src, dest);
+			} else {
+				return dijkstraResult[src].getPath(dest);
+			}
+		}
+
+		private int[] getFWPath(int src, int dest) {
 			Node start = new Node(src);
 			Node end = new Node(dest);
 			start.next = end;
@@ -321,7 +343,18 @@ public class WeightedGraph {
 		}
 	}
 
-	public AllPairs floydWarshall() {
+	public AllPairs APSP() {
+		if (negative || N * M * log(N) > N * N * N) {
+			return floydWarshall();
+		} else {
+			Path[] paths = new Path[N];
+			for (int i = 0; i < N; i++)
+				paths[i] = dijkstra(i);
+			return new AllPairs(paths);
+		}
+	}
+
+	private AllPairs floydWarshall() {
 		int[][] B = new int[N][N];
 		long[][] dist = new long[N][N];
 		for (int i = 0; i < N; i++) {
