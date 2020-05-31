@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -308,7 +309,15 @@ public class WeightedGraph {
 			Node start = new Node(src);
 			Node end = new Node(dest);
 			start.next = end;
-			createPath(start, end);
+			Node node = start;
+			while (node.next != null) {
+				int mid = B[start.val][start.next.val];
+				if (mid == -1) {
+					node = node.next;
+				} else {
+					node.next = new Node(mid);
+				}
+			}
 			List<Integer> path = new ArrayList<>();
 			Node p = start;
 			while (p != null) {
@@ -320,16 +329,6 @@ public class WeightedGraph {
 				arr[i] = path.get(j);
 			}
 			return arr;
-		}
-
-		private void createPath(Node start, Node end) {
-			if (B[start.val][end.val] != -1) {
-				Node mid = new Node(B[start.val][end.val]);
-				start.next = mid;
-				mid.next = end;
-				createPath(start, mid);
-				createPath(mid, end);
-			}
 		}
 
 		private class Node {
@@ -344,13 +343,21 @@ public class WeightedGraph {
 	}
 
 	public AllPairs APSP() {
-		if (negative || N * M * log(N) > N * N * N) {
-			return floydWarshall();
+		if (negative) {
+			if (N * M + N * (M + N) * log(N) < N * N * N) {
+				return Johnson();
+			} else {
+				return floydWarshall();
+			}
 		} else {
-			Path[] paths = new Path[N];
-			for (int i = 0; i < N; i++)
-				paths[i] = dijkstra(i);
-			return new AllPairs(paths);
+			if (N * (M + N) * log(N) < N * N * N) {
+				Path[] paths = new Path[N];
+				for (int i = 0; i < N; i++)
+					paths[i] = dijkstra(i);
+				return new AllPairs(paths);
+			} else {
+				return floydWarshall();
+			}
 		}
 	}
 
@@ -377,10 +384,71 @@ public class WeightedGraph {
 				}
 			}
 		}
-		for (int i = 0; i < N; i++)
-			if (dist[i][i] < 0)
-				negativeCycleCheck(dist[i]);
+		for (int i = 0; i < N; i++) {
+			if (dist[i][i] < 0) {
+				Queue<Integer> bfs = new LinkedList<>();
+				bfs.add(i);
+				while (bfs.size() > 0) {
+					int size = bfs.size();
+					while (size-- > 0) {
+						int node = bfs.poll();
+						dist[i][node] = -INF;
+						for (Edge e : adj[node]) {
+							if (dist[i][e.v] != -INF) {
+								bfs.add(e.v);
+							}
+						}
+					}
+				}
+			}
+		}
 		return new AllPairs(dist, B);
+	}
+
+	private AllPairs Johnson() {
+		long[] p = new long[N];
+		for (int i = 0; i < N; i++) {// Bellman-Ford once
+			boolean done = true;
+			for (Edge e : edges) {
+				if (p[e.v] > p[e.u] + e.w) {
+					p[e.v] = p[e.u] + e.w;
+					done = false;
+				}
+			}
+			if (done)
+				break;
+		}
+		Path[] paths = new Path[N];
+		for (int i = 0; i < N; i++) {//Dijkstra N-times
+			long[] dist = new long[N];
+			long[] relativeDist = new long[N];
+			int[] pred = new int[N];
+			boolean[] visited = new boolean[N];
+			Arrays.fill(dist, INF);
+			dist[i] = 0L;
+			pred[i] = -1;
+			Queue<Integer> queue = new PriorityQueue<>((a, b) -> Long.compare(relativeDist[a], relativeDist[b]));
+			queue.add(i);
+			while (!queue.isEmpty()) {
+				int node = queue.poll();
+				if (visited[node])
+					continue;
+				visited[node] = true;
+				for (Edge child : adj[node]) {
+					if (visited[child.v])
+						continue;
+					long dgc = relativeDist[node] + child.w + p[child.u] - p[child.v]; // dijkstra's greedy criterion
+					if (dgc < relativeDist[child.v]) {
+						relativeDist[child.v] = dgc;
+						dist[child.v] = dist[child.u] + child.w;
+						pred[child.v] = node;
+					}
+					queue.add(child.v);
+				}
+			}
+			paths[i] = new Path(i, pred, dist);
+		}
+		return new AllPairs(paths);
 	}
 
 	private static int log(int i) {
