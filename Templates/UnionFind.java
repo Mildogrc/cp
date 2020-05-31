@@ -8,11 +8,21 @@ public class UnionFind {
 		Arrays.fill(parent, -1);
 	}
 
-	int find(int node) {
-		if (parent[node] < 0) {
-			return node;
+	int size() {
+		return parent.length;
+	}
+
+	int find(int x) {
+		assert (x >= 0 && x < size());
+		int y = x;
+		while (parent[y] >= 0)//find overall Leader
+			y = parent[y];
+		while (parent[x] >= 0) {// Path compression
+			int nxt = parent[x];
+			parent[x] = y;
+			x = nxt;
 		}
-		return parent[node] = find(parent[node]);// path compression
+		return y;
 	}
 
 	boolean union(int x, int y) {
