@@ -377,6 +377,9 @@ public class WeightedGraph {
 				}
 			}
 		}
+		for (int i = 0; i < N; i++)
+			if (dist[i][i] < 0)
+				negativeCycleCheck(dist[i]);
 		return new AllPairs(dist, B);
 	}
 
