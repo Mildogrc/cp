@@ -178,12 +178,10 @@ public class WeightedGraph {
 	}
 
 	static class Path {
-		int src;
 		long[] dist;
 		int[] pred;
 
-		Path(int src, int[] pred, long[] dist) {
-			this.src = src;
+		Path(int[] pred, long[] dist) {
 			this.pred = pred;
 			this.dist = dist;
 		}
@@ -212,15 +210,17 @@ public class WeightedGraph {
 		}
 	}
 
-	Path dijkstra(int src) {
+	Path dijkstra(int... srcs) {
 		long[] dist = new long[N];
 		int[] pred = new int[N];
 		boolean[] visited = new boolean[N];
 		Arrays.fill(dist, INF);
-		dist[src] = 0L;
-		pred[src] = -1;
 		Queue<Integer> queue = new PriorityQueue<>((a, b) -> Long.compare(dist[a], dist[b]));
-		queue.add(src);
+		for (int src : srcs) {
+			dist[src] = 0L;
+			pred[src] = -1;
+			queue.add(src);
+		}
 		while (!queue.isEmpty()) {
 			int node = queue.poll();
 			if (visited[node])
@@ -237,14 +237,16 @@ public class WeightedGraph {
 				queue.add(child.v);
 			}
 		}
-		return new Path(src, pred, dist);
+		return new Path(pred, dist);
 	}
 
-	Path bellmanFord(int src) {
+	Path bellmanFord(int... srcs) {
 		long[] dist = new long[N];
 		int[] pred = new int[N];
-		dist[src] = 0L;
-		pred[src] = -1;
+		for (int src : srcs) {
+			dist[src] = 0;
+			pred[src] = -1;
+		}
 		boolean done = true;
 		for (int i = 1; i < N; i++) {
 			done = true;
@@ -260,7 +262,7 @@ public class WeightedGraph {
 		}
 		if (!done)
 			negativeCycleCheck(dist);
-		return new Path(src, pred, dist);
+		return new Path(pred, dist);
 	}
 
 	public void negativeCycleCheck(long[] dist) {
@@ -310,23 +312,20 @@ public class WeightedGraph {
 			Node end = new Node(dest);
 			start.next = end;
 			Node node = start;
+			int length = 2;
 			while (node.next != null) {
 				int mid = B[start.val][start.next.val];
 				if (mid == -1) {
 					node = node.next;
 				} else {
 					node.next = new Node(mid);
+					length++;
 				}
 			}
-			List<Integer> path = new ArrayList<>();
-			Node p = start;
-			while (p != null) {
-				path.add(p.val);
-				p = p.next;
-			}
-			int[] arr = new int[path.size()];
-			for (int i = 0, j = path.size() - 1; j >= 0 && i < path.size(); i++, j--) {
-				arr[i] = path.get(j);
+			int[] arr = new int[length];
+			for (int i = 0; i < length; i++) {
+				arr[i] = start.val;
+				start = start.next;
 			}
 			return arr;
 		}
@@ -406,20 +405,13 @@ public class WeightedGraph {
 	}
 
 	private AllPairs Johnson() {
-		long[] p = new long[N];
-		for (int i = 0; i < N; i++) {// Bellman-Ford once
-			boolean done = true;
-			for (Edge e : edges) {
-				if (p[e.v] > p[e.u] + e.w) {
-					p[e.v] = p[e.u] + e.w;
-					done = false;
-				}
-			}
-			if (done)
-				break;
+		int[] srcs = new int[N];
+		for (int i = 0; i < N; i++) {
+			srcs[i] = i;
 		}
+		long[] p = bellmanFord(srcs).dist;
 		Path[] paths = new Path[N];
-		for (int i = 0; i < N; i++) {//Dijkstra N-times
+		for (int i = 0; i < N; i++) {// Dijkstra N-times
 			long[] dist = new long[N];
 			long[] relativeDist = new long[N];
 			int[] pred = new int[N];
@@ -446,7 +438,7 @@ public class WeightedGraph {
 					queue.add(child.v);
 				}
 			}
-			paths[i] = new Path(i, pred, dist);
+			paths[i] = new Path(pred, dist);
 		}
 		return new AllPairs(paths);
 	}
