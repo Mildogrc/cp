@@ -1,108 +1,182 @@
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 
 public class Graph {
-	int V;
+	int N, M;
 	List<Integer>[] adj;
+	Edge[] edges;
+	static final long INF = (long) 1e18;
+	int ith = 0;
 
-	Graph(int V) {
-		this.V = V;
+	static class Edge {
+		int u;
+		int v;
+
+		Edge(int src, int dest) {
+			u = src;
+			v = dest;
+		}
+	}
+
+	Graph(int V, int E) {
+		this.N = V;
 		adj = new List[V];
 		for (int i = 0; i < V; i++) {
-			List<Integer> temp = new ArrayList<>();
-			adj[i] = temp;
+			adj[i] = new ArrayList<>();
 		}
+		edges = new Edge[E];
 	}
 
-	void addEdge(int src, int dest) {
+	void addEdge(int src, int dest, boolean bidi) {
 		this.adj[src].add(dest);
-		this.adj[dest].add(src);
+		if (bidi)
+			this.adj[dest].add(src);
+		edges[ith++] = new Edge(src, dest);
 	}
 
-	void BFS(Queue<Integer> queue, boolean[] visited, int[] parent) {
-		int current = queue.poll();
-		for (int j = 0; j != adj[current].size(); j++) {
-			int i = adj[current].get(j);
+	int connectedComp() {
+		UnionFind uf = new UnionFind(N);
+		for (Edge e : edges)
+			uf.union(e.u, e.v);
+		Set<Integer> set = new HashSet<>();
+		for (int i = 0; i < N; i++) {
+			set.add(uf.find(i));
+		}
+		return set.size();
+	}
+
+	static class Path {
+		long[] dist;
+		int[] pred;
+
+		Path(int[] pred, long[] dist) {
+			this.pred = pred;
+			this.dist = dist;
+		}
+
+		long getDist(int dest) {
+			return dist[dest];
+		}
+
+		int[] getPath(int dest) {
+			if (dist[dest] == INF)
+				return null;
+			List<Integer> path = new ArrayList<>();
+			while (dest != -1) {
+				path.add(dest);
+				dest = pred[dest];
+			}
+			int[] arr = new int[path.size()];
+			for (int i = path.size() - 1, j = 0; i >= 0; i--, j++) {
+				arr[j] = path.get(i);
+			}
+			return arr;
+		}
+	}
+
+	Path BFS(int... srcs) {
+		Queue<Integer> bfs = new LinkedList<>();
+		long[] dist = new long[N];
+		int[] pred = new int[N];
+		boolean[] visited = new boolean[N];
+		for (int src : srcs) {
+			bfs.add(src);
+			dist[src] = 0;
+			pred[src] = -1;
+			visited[src] = true;
+		}
+		while (bfs.size() > 0) {
+			int sz = bfs.size();
+			while (sz-- > 0) {
+				int node = bfs.poll();
+				for (int child : adj[node]) {
+					if (!visited[child]) {
+						bfs.add(child);
+						pred[child] = node;
+						dist[child] = dist[node] + 1;
+						visited[child] = true;
+					}
+				}
+			}
+		}
+		return new Path(pred, dist);
+	}
+
+	List<List<Integer>> Kosaraju() {
+		int[] map = finishingTimes();
+		List<List<Integer>> SCCs = new ArrayList<>();
+		boolean[] visited = new boolean[N];
+		for (int i = N - 1; i >= 0; i--) {
+			if (!visited[map[i]]) {
+				List<Integer> SCC = new ArrayList<>();
+				Queue<Integer> bfs = new LinkedList<>();
+				bfs.add(map[i]);
+				SCC.add(map[i]);
+				visited[map[i]] = true;
+				while (bfs.size() > 0) {
+					int sz = bfs.size();
+					while (sz-- > 0) {
+						int node = bfs.poll();
+						for (int child : adj[node]) {
+							if (!visited[child]) {
+								SCC.add(child);
+								bfs.add(child);
+								visited[child] = true;
+							}
+						}
+					}
+				}
+				SCCs.add(SCC);
+			}
+		}
+		return SCCs;
+	}
+
+	private int[] finishingTimes() {
+		List<Integer>[] grev = new List[N];
+		for (int i = 0; i < N; i++) {
+			grev[i] = new ArrayList<>();
+		}
+		for (int x = 0; x < N; x++) {
+			for (int y : adj[x]) {
+				grev[y].add(x);
+			}
+		}
+		int t = 0;
+		int[] finish = new int[N];
+		Arrays.fill(finish, -1);
+		boolean[] visited = new boolean[N];
+		for (int i = N - 1; i >= 0; i--) {
 			if (!visited[i]) {
-				parent[i] = current;
-
-				visited[i] = true;
-
-				queue.add(i);
+				Stack<Integer> dfs = new Stack<Integer>();
+				dfs.push(i);
+				while (dfs.size() > 0) {
+					if (visited[dfs.peek()]) {
+						int node = dfs.pop();
+						if (finish[node] == -1)
+							finish[node] = t++;
+					} else {
+						visited[dfs.peek()] = true;
+						for (int child : grev[dfs.peek()]) {
+							if (!visited[child]) {
+								dfs.push(child);
+							}
+						}
+					}
+				}
 			}
 		}
-	}
-
-	int isIntersecting(boolean[] s_visited, boolean[] t_visited) {
-		for (int i = 0; i < V; i++) {
-			if (s_visited[i] && t_visited[i])
-				return i;
+		int[] flippedFinish = new int[finish.length];
+		for (int i = 0; i < finish.length; i++) {
+			flippedFinish[finish[i]] = i;
 		}
-		return -1;
-	}
-
-	int[] printPath(int[] s_parent, int[] t_parent, int s, int t, int intersectNode) {
-		List<Integer> path = new ArrayList<>();
-		path.add(intersectNode);
-		int i = intersectNode;
-		while (i != s) {
-			path.add(s_parent[i]);
-			i = s_parent[i];
-		}
-		Collections.reverse(path);
-		i = intersectNode;
-		while (i != t) {
-			path.add(t_parent[i]);
-			i = t_parent[i];
-		}
-		int[] arr = new int[path.size()];
-		for (int j = 0; j < arr.length; j++) {
-			arr[j] = path.get(j);
-		}
-		return arr;
-	}
-
-	int[] shortestPath(int s, int t) {
-		boolean[] s_visited = new boolean[V];
-		boolean[] t_visited = new boolean[V];
-
-		int[] s_parent = new int[V];
-		int[] t_parent = new int[V];
-
-		Queue<Integer> s_queue = new ArrayDeque<>();
-		Queue<Integer> t_queue = new ArrayDeque<>();
-
-		int intersectNode = -1;
-
-		for (int i = 0; i < V; i++) {
-			s_visited[i] = false;
-			t_visited[i] = false;
-		}
-
-		s_queue.add(s);
-		s_visited[s] = true;
-
-		s_parent[s] = -1;
-
-		t_queue.add(t);
-		t_visited[t] = true;
-
-		t_parent[t] = -1;
-
-		while (s_queue.size() != 0 && t_queue.size() != 0) {
-			BFS(s_queue, s_visited, s_parent);
-			BFS(t_queue, t_visited, t_parent);
-			intersectNode = isIntersecting(s_visited, t_visited);
-			if (intersectNode != -1) {
-				return printPath(s_parent, t_parent, s, t, intersectNode);
-			}
-		}
-		System.out.println("-1");
-		System.exit(0);
-		return null;
+		return flippedFinish;
 	}
 
 }
