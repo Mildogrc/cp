@@ -9,6 +9,7 @@ public class Flow {
 	long[][] c;
 
 	Flow(int N) {
+		this.N = N;
 		adj = new List[N];
 		for (int i = 0; i < N; i++)
 			adj[i] = new ArrayList<>();
@@ -16,8 +17,9 @@ public class Flow {
 	}
 
 	void addEdge(int u, int v, int capacity) {
-		if (c[u][v] == 0) {
+		if (c[u][v] == 0 && c[v][u] == 0) {
 			adj[u].add(v);
+			adj[v].add(u);
 		}
 		c[u][v] += capacity;
 	}
@@ -79,4 +81,3 @@ public class Flow {
 		}
 	}
 }
-
