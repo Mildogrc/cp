@@ -233,8 +233,8 @@ public class WeightedGraph {
 				if (dgc < dist[child.v]) {
 					dist[child.v] = dgc;
 					pred[child.v] = node;
+					queue.add(child.v);
 				}
-				queue.add(child.v);
 			}
 		}
 		return new Path(pred, dist);
