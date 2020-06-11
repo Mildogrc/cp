@@ -16,7 +16,6 @@ public class task1196 {
 		int K = fi.nextInt();
 
 		List<Edge>[] adj = new List[N];
-		long[] dist = new long[N];
 		int[] count = new int[N];
 
 		for (int i = 0; i < N; i++)
