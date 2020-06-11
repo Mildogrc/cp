@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TEST {
+public class task1680 {
 	static final long INF = (long) 1e18;
 
 	public static void main(String[] args) throws IOException {
