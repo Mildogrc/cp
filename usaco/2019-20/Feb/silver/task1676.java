@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class task1676v {
+public class task1676 {
 	public static void main(String[] args) throws IOException {
 		FastInput fi = new FastInput();
 		int N = fi.nextInt();
