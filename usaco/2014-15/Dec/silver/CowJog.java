@@ -23,8 +23,8 @@ public class CowJog {
 		for (int i = 0; i < N; i++) {
 			tokens = in.readLine().split(" ");
 			pos[i] = new Place();
-			pos[i].start = Integer.parseInt(tokens[0]);
-			pos[i].end = (Integer.parseInt(tokens[1]) * T) + pos[i].start;
+			pos[i].start = Long.parseLong(tokens[0]);
+			pos[i].end = (Long.parseLong(tokens[1]) * T) + pos[i].start;
 		}
 
 		Arrays.sort(pos, (a, b) -> Long.compare(a.start, b.start));
@@ -36,7 +36,7 @@ public class CowJog {
 		int count = 0;
 		int max = -1;
 		for (int i = 0; i < N; i++) {
-			
+
 			if (max < pos[i].pos) {
 				count++;
 				max = pos[i].pos;
