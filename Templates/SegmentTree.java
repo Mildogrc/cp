@@ -2,12 +2,13 @@ import java.util.Comparator;
 
 public class SegmentTree {
 
-	private int MaxN;
+	private int N;
 	public Integer[] segtree;
+	public int[] input;
 	Comparator<Integer> comparator;
 
-	public SegmentTree(int[] arr) {
-		this(arr, (a, b) -> Math.max(a, b));// default to Max Segment Tree
+	public SegmentTree(int[] input) {
+		this(input, (a, b) -> Math.max(a, b));// default to Max Segment Tree
 	}
 
 	public SegmentTree(int[] arr, Comparator<Integer> c) {
@@ -15,19 +16,20 @@ public class SegmentTree {
 		 * Specify Type of Segment Tree with Comparator E.G.: Min -> (a, b) ->
 		 * Math.min(a, b) Sum -> (a, b) -> a + b ...
 		 */
-		MaxN = arr.length;
-		segtree = new Integer[4 * MaxN];
+		N = arr.length;
+		segtree = new Integer[4 * N];
+		input = arr;
 		comparator = c;
-		build(arr, 0, 0, MaxN - 1);
+		createTree(input, 0, 0, N - 1);
 	}
 
-	private void build(int[] arr, int node, int start, int end) {
+	private void createTree(int[] arr, int node, int start, int end) {
 		if (start == end) {
 			segtree[node] = arr[start];
 		} else {
 			int mid = (start + end) / 2;
-			build(arr, 2 * node + 1, start, mid);
-			build(arr, 2 * node + 2, mid + 1, end);
+			createTree(arr, 2 * node + 1, start, mid);
+			createTree(arr, 2 * node + 2, mid + 1, end);
 			segtree[node] = comparator.compare(segtree[2 * node + 1], segtree[2 * node + 2]);
 		}
 	}
@@ -46,7 +48,7 @@ public class SegmentTree {
 	}
 
 	public void update(int index, int newValue) {
-		update(0, 0, MaxN - 1, index, newValue);
+		update(0, 0, N - 1, index, newValue);
 	}
 
 	private int get(int idx, int l, int r, int lhs, int rhs) {
@@ -55,17 +57,17 @@ public class SegmentTree {
 		Integer ret = null;
 		int m = (l + r) / 2;
 		if (m >= lhs)
-			ret = localCompare(ret, get(2 * idx + 1, l, m, lhs, rhs));
+			ret = compare(ret, get(2 * idx + 1, l, m, lhs, rhs));
 		if (m + 1 <= rhs)
-			ret = localCompare(ret, get(2 * idx + 2, m + 1, r, lhs, rhs));
+			ret = compare(ret, get(2 * idx + 2, m + 1, r, lhs, rhs));
 		return ret;
 	}
 
 	public int get(int l, int r) {
-		return get(0, 0, MaxN - 1, l, r);
+		return get(0, 0, N - 1, l, r);
 	}
 
-	public Integer localCompare(Integer a, Integer b) {
+	public Integer compare(Integer a, Integer b) {
 		if (a == null && b == null) {
 			return null;
 		}
