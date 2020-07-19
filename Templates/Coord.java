@@ -83,12 +83,7 @@ public class Coord {
 
 	@Override
 	public int hashCode() {
-		final long prime = 31;
-		final int m = (int) 1e9 + 9;
-		long result = 1;
-		result = ((prime * result + x) % m);
-		result = ((prime * result + y) % m);
-		return (int) result;
+		return (int) ((((long) x << 5) - x + y) % (1e9 + 9));
 	}
 
 	@Override
