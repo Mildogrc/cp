@@ -1,5 +1,3 @@
-package BaseCodeForCoding;
-
 public class Pair<F, S> {
 	F f;
 	S s;
@@ -15,14 +13,14 @@ public class Pair<F, S> {
 
 	@Override
 	public int hashCode() {
-		int a = f.hashCode();
-		int b = f.hashCode();
+		int a = f == null ? 0 : f.hashCode();
+		int b = s == null ? 0 : s.hashCode();
 		return (a << 5) - a + b;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("(%s, %s)", f.toString(), s.toString());
+		return String.format("(%s, %s)", f == null ? "null" : f.toString(), s == null ? "null" : s.toString());
 	}
 
 	@Override
@@ -33,9 +31,8 @@ public class Pair<F, S> {
 			return false;
 		if (o instanceof Pair<?, ?>) {
 			Pair<?, ?> p = (Pair<?, ?>) o;
-			return p.f.equals(f) && p.s.equals(s);
+			return ((f == p.f) || p.f.equals(f)) && (s == p.s || p.s.equals(s));
 		}
 		return false;
 	}
 }
-
