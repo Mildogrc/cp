@@ -1,3 +1,5 @@
+package BaseCodeForCoding;
+
 public class Pair<F, S> {
 	F f;
 	S s;
@@ -7,7 +9,7 @@ public class Pair<F, S> {
 		this.s = s;
 	}
 
-	public static <F, S> Pair<F, S> mp(F f, S s) {//Can be used even if it is not in class
+	public static <F, S> Pair<F, S> mp(F f, S s) {// Can be used even if it is not in class
 		return new Pair<F, S>(f, s);
 	}
 
@@ -20,7 +22,7 @@ public class Pair<F, S> {
 
 	@Override
 	public String toString() {
-		return f.toString() + " " + s.toString() + "\n";
+		return String.format("(%s, %s)", f.toString(), s.toString());
 	}
 
 	@Override
