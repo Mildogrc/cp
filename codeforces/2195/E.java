@@ -77,9 +77,9 @@ public class E {
         long[] t = new long[n - 1];
         for (int i = 0; i < n - 1; i++) {
             int j = i + 1;
-            long sum = lsubtreesz[j] * 2L + rsubtreesz[j] * 2L + 1;
-            long parentSum = psubtreeszL(p[j], psubtreesz, lsubtreesz, rsubtreesz, p);
-            sum = (sum + parentSum) % MOD;
+            // long sum = lsubtreesz[j] * 2L + rsubtreesz[j] * 2L + 1;
+            long sum = psubtreeszL(j, psubtreesz, lsubtreesz, rsubtreesz, p);
+            // sum = (sum + parentSum) % MOD;
             t[i] = sum;
         }
         return t;
