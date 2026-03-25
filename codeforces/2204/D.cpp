@@ -7,7 +7,6 @@ int bfs(vector<vector<int>> &adj, vector<int> &dist, vector<int> &visited, int s
     dist[s] = 0;
     int count= 1;
     while(!q.empty()) {
-        // cout << "dist: "; for (int i = 0; i < dist.size(); i++) cout << dist[i] << " "; cout << endl;
         int u = q.front(); q.pop();
         count++;
         for (int v : adj[u]) {
@@ -21,9 +20,7 @@ int bfs(vector<vector<int>> &adj, vector<int> &dist, vector<int> &visited, int s
     q.push(s);
     vector<int> both(2);
     visited[s] = 1;
-    // cout << "dist: "; for (int i = 0; i < dist.size(); i++) cout << dist[i] << " "; cout << endl;
     while(!q.empty()) {
-        // cout << "visited: "; for (int i = 0; i < visited.size(); i++) cout << visited[i] << " "; cout << endl;
         int u = q.front(); q.pop();
         both[dist[u]%2]++;
         for (int v : adj[u]) {
