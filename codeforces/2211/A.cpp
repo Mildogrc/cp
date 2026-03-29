@@ -3,7 +3,16 @@ using namespace std;
 // #define int long long
 
 void solve() {
-    
+    int n;
+    cin >> n;
+    int a;
+    for (int i = 0; i < n; i++) cin >> a;
+    if (n == 1) {
+        cout << "1\n";
+    } else {
+        for (int i = 0; i < n; i++) cout << "2 ";
+        cout << "\n";
+    }
 }
 
 signed main() {
