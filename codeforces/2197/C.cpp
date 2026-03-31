@@ -5,20 +5,21 @@ using namespace std;
 int solve() {
     ll p, q;
     cin >> p >> q;
-    if (p > q) return 1;
+    if (p >= q) return 1;
 
     ll l = 0;
     ll r = p;
 
     while (l < r) {
-        cout << l << " " << r << "\n";
-        ll mid = (l+r+1)/2;
-        if ((p-mid) * 3 < (q-mid) * 2) {
-            r = mid - 1;
+        ll mid = (l+r)/2;
+        // cout << p-mid << " " << q-mid << "\n";
+        if ((p-mid) * 3 > (q-mid) * 2) {
+            l = mid + 1;
         } else {
-            l = mid;
+            r = mid;
         }
     }
+    // cout << p-l << " " << q-r << "\n";
     if ((p-l) * 3 == (q-r) * 2) return 0;
     return 1;
 }
