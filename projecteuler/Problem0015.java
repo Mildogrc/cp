@@ -1,4 +1,4 @@
-public class TEST {
+public class Problem0015 {
 	public static void main(String[] args) {
 		int N = 20;
 		long[][] dp = new long[N + 1][N + 1];
