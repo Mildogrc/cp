@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Problem0028 {
 	public static void main(String[] args) {
 		int N = 1001;
