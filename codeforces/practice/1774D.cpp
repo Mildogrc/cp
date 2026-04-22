@@ -22,25 +22,25 @@ void solve() {
     } else {
         int target = s/n;
         vi sum(n);
-        F0R(i, n) F0R(j, m) sum[i] += a[i][j];
-
         set<int> s;
-        F0R(i, n) if (sum[i] < target) s.insert(i);
-        // cout << "set of less: "; for(int e : s) cout << e << " "; cout << endl;
+        V<set<int>> zeros(m);
         V<tuple<int, int, int>> ops;
+        
+        F0R(i, n) F0R(j, m) sum[i] += a[i][j];
+        F0R(i, n) if (sum[i] < target) s.insert(i);
+        F0R(j, m) for(int i : s) if (a[i][j] == 0) zeros[j].insert(i);
         F0R(i, n) {
             int j = 0;
-            // if (sum[i] > target) cout << "working on: " << i << endl;
             while (sum[i] > target) {
-                // cout << "here1" << endl;
                 if (a[i][j]) {
-                    for (int x : s) {
-                        if(a[x][j] == 0) {
-                            ops.pb(make_tuple(i, x, j));
-                            a[i][j] = 0; sum[i]--;
-                            a[x][j] = 1; sum[x]++;
-                            if (sum[x] == target) s.erase(x);
-                            break;
+                    if (zeros[j].size() > 0) {
+                        int x = *zeros[j].begin();
+                        ops.pb(make_tuple(i, x, j));
+                        a[i][j] = 0; sum[i]--;
+                        a[x][j] = 1; sum[x]++;
+                        zeros[j].erase(x);
+                        if (sum[x] == target) { //s.erase(x);
+                            F0R (r, m) zeros[r].erase(x);
                         }
                     }
                 }
