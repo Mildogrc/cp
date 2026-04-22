@@ -8,11 +8,15 @@ using namespace std;
 #define F0R(i, a) FOR(i, 0, a)
 #define ROF(i, a, b) for (int i = (b) - 1; i >= (a); --i)
 #define R0F(i, a) ROF(i, 0, a)
-// #define int long long
+#define int long long
 // #define double long double
 
 void solve() {
-    
+    int x, y;
+    cin >> x >> y;
+    int z = y/x;
+    if(z < 3) cout << "NO\n";
+    else cout << "YES\n";
 }
 
 signed main() {

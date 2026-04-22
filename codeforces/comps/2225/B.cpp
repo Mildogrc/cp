@@ -12,7 +12,13 @@ using namespace std;
 // #define double long double
 
 void solve() {
-    
+    string s;
+    cin >> s;
+    int n = s.length();
+    int c = 0;
+    FOR(i, 1, n) if (s[i] == s[i-1]) c++;
+    if (c <= 2) cout << "YES\n";
+    else cout << "NO\n";
 }
 
 signed main() {

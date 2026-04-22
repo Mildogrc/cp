@@ -12,7 +12,17 @@ using namespace std;
 // #define double long double
 
 void solve() {
-    
+    int n;
+    cin >> n;
+    vi a(n);
+    F0R(i, n) cin >> a[i];
+    int e = 0, o = 0;
+    F0R(i, n) o += (a[i]%2);
+    e = n-o;
+    if (e%2 == 1) o--;
+    // cout << o << endl;
+    if (((o+1)/2) %2 == 0) cout << "Alice\n";
+    else cout << "Bob\n";
 }
 
 signed main() {
