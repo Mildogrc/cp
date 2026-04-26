@@ -8,13 +8,21 @@ using namespace std;
 #define F0R(i, a) FOR(i, 0, a)
 #define ROF(i, a, b) for (int i = (b) - 1; i >= (a); --i)
 #define R0F(i, a) ROF(i, 0, a)
-template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
-template<typename T> using maxheap = priority_queue<T>;
 // #define int long long
 // #define double long double
 
 void solve() {
-    
+    int n;
+    cin >> n;
+    vi a(n);
+    F0R(i, n) cin >> a[i];
+    F0R(i, n) {
+        if (a[i] == 100) {
+            cout << "Yes\n";
+            return;
+        }
+    }
+    cout << "No\n";
 }
 
 signed main() {
