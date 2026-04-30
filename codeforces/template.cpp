@@ -14,6 +14,9 @@ template<typename T> using maxheap = priority_queue<T>;
 // #define double long double
 
 void solve() {
+    int n, m;
+    cin >> n;
+    vi a(n); F0R(i, n) cin >> a[i];
     
 }
 

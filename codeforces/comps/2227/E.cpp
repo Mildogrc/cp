@@ -23,8 +23,6 @@ void solve() {
     R0F(i, n-1) mr[i] = min(a[i], mr[i+1]);
     int sum = 0;
     R0F(i, n) sum += a[i]-mr[i];
-    // cout << sum << endl;
-
 
     stack<pair<int,int>> st;
     int ans = 0;
@@ -35,7 +33,7 @@ void solve() {
             st.pop();
         }
         ans = max(ans, c);
-        st.push({a[i], c + 1});
+        st.push(mp(a[i], c + 1));
     }
     cout << sum+ans << endl;
 }
