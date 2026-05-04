@@ -6,37 +6,42 @@ using namespace std;
 #define vi V<int>
 #define FOR(i, a, b) for (int i = (a); i < (b); ++i)
 #define F0R(i, a) FOR(i, 0, a)
-#define rep(a) F0R(_, a)
+#define FOR(a) F0R(_, a)
 #define ROF(i, a, b) for (int i = (b) - 1; i >= (a); --i)
 #define R0F(i, a) ROF(i, 0, a)
 #define each(a, x) for (auto &a : x)
 template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T>;
-#define int long long
+// #define int long long
 // #define double long double
 
+int isPrime(int x) {
+    for(int i = 2; i*i <= x; i++) if(x%i==0) return 0;
+    return 1;
+}
+
+
+int counter(vi &a, int j) {
+
+}
+
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> path_lcm(n);
-    vector<int> path_count(n);
-    R0F(i, n) {
-        int a, k, l = 1, paths = 0;
-        cin >> a >> k;
-        F0R(j, k) {
-            int c;
-            cin >> c;
-            paths += path_count[--c];
-            l = lcm(l, gcd(path_lcm[c], a));
+    int n, m;
+    cin >> n >> m;
+    vi a(n); F0R(i, n) cin >> a[i];
+    
+    V<vi> mb(m);
+    F0R(i, n) mb[i%m].pb(a[i]);
+
+    each(arr : mb) {
+        F0R(j, each.size()) {
+            if (isPrime(each[j])) counter(each, j);
         }
-        if (gcd(a, l) > 1) {
-            path_lcm[i] = gcd(a, l);
-            path_count[i] = paths;
-        } else {
-            path_lcm[i] = a;
-            path_count[i] = paths+1;
-        }
-        cout << path_count[i] << endl;
+    }
+
+    F0R(i, m) {
+        F0R(j, mb[i].size()) cout << mb[i][j] << " ";
+        cout << endl;
     }
 }
 

@@ -6,8 +6,10 @@ using namespace std;
 #define vi V<int>
 #define FOR(i, a, b) for (int i = (a); i < (b); ++i)
 #define F0R(i, a) FOR(i, 0, a)
+#define rep(a) F0R(_, a)
 #define ROF(i, a, b) for (int i = (b) - 1; i >= (a); --i)
 #define R0F(i, a) ROF(i, 0, a)
+#define each(a, x) for (auto &a : x)
 template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T>;
 // #define int long long
@@ -15,9 +17,9 @@ template<typename T> using maxheap = priority_queue<T>;
 
 void solve() {
     int n, m;
-    cin >> n;
+    cin >> n >> m;
     vi a(n); F0R(i, n) cin >> a[i];
-    
+
 }
 
 signed main() {
