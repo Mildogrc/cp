@@ -4,7 +4,7 @@
         {
             "label": "Run Current C++ File",
             "type": "shell",
-            "command": "/opt/homebrew/bin/g++-15 -std=gnu++23 \"${file}\" -o \"${fileDirname}/main.o\" && \"${fileDirname}/main.o\" && rm -f \"${fileDirname}/main.o\"",
+            "command": "/opt/homebrew/bin/g++-15 -std=gnu++23 -DDEBUG=0 \"${file}\" -o \"${fileDirname}/main.o\" && \"${fileDirname}/main.o\" && rm -f \"${fileDirname}/main.o\"",
             "options": {
                 "cwd": "${fileDirname}"
             },
@@ -13,6 +13,15 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Run Current C++ File Debug",
+            "type": "shell",
+            "command": "/opt/homebrew/bin/g++-15 -std=gnu++23 -DDEBUG=1 \"${file}\" -o \"${fileDirname}/main.o\" && \"${fileDirname}/main.o\" && rm -f \"${fileDirname}/main.o\"",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": ["$gcc"]
         }
     ]
 }
