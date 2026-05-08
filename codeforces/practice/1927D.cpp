@@ -37,10 +37,25 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
+void solve2(vi &b) {
+    int l, r;
+    cin >> l >> r;
+    if (b[l] == -1 || b[l] > r) cout << "-1 -1 \n";
+    else cout << l << " " << b[l] << "\n";
+    ifD cout << endl;
+}
+
 void solve(int tc) {
     int n, k = 0;
-    cin >> n >> k;
-    vi a(n); F0R(i, n) cin >> a[i];
+    cin >> n;
+    vi a(n + 1), b(n + 1); F0R(i, n) cin >> a[i+1];
+    b[n] = -1;
+    R0F(i, n) {
+        if(a[i] == a[i+1]) b[i] = b[i+1];
+        else b[i] = i+1;
+    }
+    ifD F0R(i, n+1) cout << b[i] << " \n"[i==n];
+    int q; cin >> q; while (q--) solve2(b);
 
 }
 

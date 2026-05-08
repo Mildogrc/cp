@@ -37,11 +37,55 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
-void solve(int tc) {
-    int n, k = 0;
-    cin >> n >> k;
-    vi a(n); F0R(i, n) cin >> a[i];
+int get(vi &dsu, int x) {
+    if (dsu[x] < 0) return x;
+    dsu[x] = get(dsu, dsu[x]);
+    return dsu[x];
+}
 
+int combine(vi &dsu, int i, int j) {
+    i = get(dsu, i);
+    j = get(dsu, j);
+    if (dsu[i] < dsu[j]) {
+        dsu[i] += dsu[j];
+        dsu[j] = i;
+        return j;
+    } else {
+        dsu[j] += dsu[i];
+        dsu[i] = j;
+        return i;
+    }
+}
+
+void run(int i, int j, auto &edges, auto &nodes, auto &dsu) {
+    if (get(dsu, i) != get(dsu, j)) {
+        cout << "? " << i << " " << j << endl;
+        int mid; cin >> mid;
+        if (mid == i || mid == j) {
+            edges.insert(mp(min(i, j), max(i, j)));
+            nodes.erase(combine(dsu, i, j));
+        } else {
+            run(i, mid, edges, nodes, dsu);
+            run(mid, j, edges, nodes, dsu);
+        }
+    }
+}
+
+void solve(int tc) {
+    int n;
+    cin >> n;
+
+    set<pair<int, int>> edges;
+    set<int> nodes; F0R(i, n) nodes.insert(i+1);
+    vi dsu(n+1, -1);
+
+    while(nodes.size() > 1) {
+        int i = *nodes.begin(), j = *prev(nodes.end());
+        run(i, j, edges, nodes, dsu);
+    }
+
+    cout << "! ";
+    for(auto &[u, v] : edges) cout << u << " " << v << " "; cout << endl;
 }
 
 signed main() {

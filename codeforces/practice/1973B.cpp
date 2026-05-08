@@ -37,11 +37,48 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
+vi bitify(int x) {
+    vi ret(21);
+    F0R(i, 21) if (x&(1<<i)) ret[i]=1;
+    return ret;
+}
+
+int works(int k, vi &a, int n) {
+    ifD cout << "checking: " << k << ":\n";
+    vi bits(21), checkbit(21);
+    F0R(i, k) {
+        vi cbit = bitify(a[i]);
+        ifD F0R(i, 21) cout << cbit[i] << " \n"[i==20];
+        F0R(b, 21) bits[b] += cbit[b];
+        F0R(b, 21) checkbit[b] += cbit[b];
+    }
+    ifD F0R(i, 21) cout << checkbit[i] << " \n"[i==20];
+    FOR(i, k, n) {
+        vi cbit = bitify(a[i]);
+        F0R(b, 21) bits[b] += cbit[b];
+        cbit = bitify(a[i-k]);
+        F0R(b, 21) bits[b] -= cbit[b];
+        ifD F0R(i, 21) cout << bits[i] << " \n"[i==20];
+        F0R(b, 21) {
+            if (checkbit[b] && !bits[b]) return false;
+            if (!checkbit[b] && bits[b]) return false;
+        }
+    }
+    return true;
+}
+
 void solve(int tc) {
     int n, k = 0;
-    cin >> n >> k;
+    cin >> n;
     vi a(n); F0R(i, n) cin >> a[i];
 
+    int lo = 1, hi = n;
+    while (lo < hi) {
+        int mid = (lo+hi)/2;
+        if(!works(mid, a, n)) lo = mid+1;
+        else hi = mid;
+    }
+    cout << lo << endl;
 }
 
 signed main() {
