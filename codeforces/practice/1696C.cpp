@@ -40,9 +40,25 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define double long double
 
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n >> k;
-    vi a(n); F0R(i, n) cin >> a[i];
+    int n;
+    string s, t, news = "", newt = "";
+    cin >> n >> s >> t;
+    stack<char> st;
+    F0R(i, n) if (s[i] != 'b') news += s[i];
+    F0R(i, n) if (t[i] != 'b') newt += t[i];
+    if (news != newt) {
+        cout << "NO\n"; return;
+    }
+    F0R(i, n) {
+        if (s[i] == 'a') st.push(s[i]);
+        if (!st.empty() && t[i] == 'a') poptop(st);
+    }
+    R0F(i, n) {
+        if (s[i] == 'c') st.push(s[i]);
+        if (!st.empty() && t[i] == 'c') poptop(st);
+    }
+    if (!st.empty()) cout << "NO\n";
+    else cout << "YES\n";
 
 }
 

@@ -15,12 +15,9 @@ using namespace std;
 #define ROF(i, a, b) for (int i = (b) - 1; i >= (a); --i)
 #define R0F(i, a) ROF(i, 0, a)
 #define each(a, x) for (auto &a : x)
-#define eachp(u, v, x) for (auto &[u, v] : x)
 #define bg(x) begin(x)
 #define all(x) bg(x), end(x)
 #define rall(x) rbegin(x), rend(x)
-#define srt(x) sort(all(x))
-#define rsrt(x) sort(rall(x))
 #define ft front
 #define bk back
 #if DEBUG
@@ -40,10 +37,24 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define double long double
 
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n >> k;
-    vi a(n); F0R(i, n) cin >> a[i];
-
+    int n, k = 0, z = 0;
+    cin >> n;
+    vi a(n), p(n); F0R(i, n) cin >> a[i];
+    F0R(i, n) {
+        if (!p[i]) {
+            ifD cout << i << ": ";
+            int sum = 0;
+            int j = i;
+            while(!p[j]) {
+                p[j] = 1;
+                j = a[j]-1;
+                sum++;
+            }
+            ifD cout << sum << endl;
+            k += (sum-1)/2;
+        }
+    }
+    cout << k << endl;
 }
 
 signed main() {

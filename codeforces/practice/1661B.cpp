@@ -39,11 +39,15 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
+
+
 void solve(int tc) {
     int n, k = 0;
     cin >> n >> k;
     vi a(n); F0R(i, n) cin >> a[i];
+    vi dp(MOD+1);
 
+    F0R(i, n) cout << steps(a[i], 0, dp) << " "; cout << endl;
 }
 
 signed main() {

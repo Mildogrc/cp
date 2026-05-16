@@ -19,8 +19,6 @@ using namespace std;
 #define bg(x) begin(x)
 #define all(x) bg(x), end(x)
 #define rall(x) rbegin(x), rend(x)
-#define srt(x) sort(all(x))
-#define rsrt(x) sort(rall(x))
 #define ft front
 #define bk back
 #if DEBUG
@@ -44,6 +42,27 @@ void solve(int tc) {
     cin >> n >> k;
     vi a(n); F0R(i, n) cin >> a[i];
 
+    map<int, int> m; F0R(i, n) m[a[i]]++;
+
+    int msum = 0, sum = 0, ck = 0, prev = -1;
+
+    eachp(u, v, m) {
+        if (u == prev+1) {
+            sum += v;
+            ck++;
+            prev = u;
+            if (ck > k) {
+                sum -= m[u-k];
+                ck--;
+            }
+        } else {
+            sum = v;
+            ck = 1;
+            prev = u;
+        }
+        msum = max(msum, sum);
+    }
+    cout << msum << endl;
 }
 
 signed main() {

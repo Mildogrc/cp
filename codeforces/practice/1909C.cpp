@@ -36,14 +36,32 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
 
 void solve(int tc) {
     int n, k = 0;
-    cin >> n >> k;
-    vi a(n); F0R(i, n) cin >> a[i];
+    cin >> n;
+    vi l(n); F0R(i, n) cin >> l[i];
+    vi r(n); F0R(i, n) cin >> r[i];
+    vi c(n); F0R(i, n) cin >> c[i];
 
+    vi both; F0R(i, n) both.pb(l[i]); F0R(i, n) both.pb(r[i]);
+    set<int> ls;
+    F0R(i, n) ls.insert(l[i]);
+    srt(both);
+
+    vi pairs;
+    stack<int> s;
+    F0R(i, 2*n) {
+        if(ls.contains(both[i])) s.push(both[i]);
+        else pairs.pb(both[i]-poptop(s));
+    }
+    srt(pairs);
+    rsrt(c);
+    int sum = 0;
+    F0R(i, n) sum += pairs[i]*c[i];
+    cout << sum << endl;
 }
 
 signed main() {
