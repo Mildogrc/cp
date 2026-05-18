@@ -39,28 +39,28 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
-const int MOD = 32768;
-
-int times_2_ans(int x) {
-    int c;
-    if (!x) return 0;
-    for (c = 0; x != 0;c++) x = (x*2)%MOD;
-    return c;
-}
-
-int solve1(int x) {
-    int mn = times_2_ans(x);
-    F0R(i, 20) mn = min(mn, times_2_ans((x+i)%MOD) + i);
-    return mn;
-}
-
 void solve(int tc) {
     int n, k = 0;
-    cin >> n ;
+    cin >> n;
     vi a(n); F0R(i, n) cin >> a[i];
-    F0R(i, n) cout << solve1(a[i]) << " "; cout << endl;
+
+    vi c(3);
+    F0R(i, n) c[a[i]]++;
+    ifD F0R(i, 3) cout << c[i] << " ";
+    int sum = c[0];
+    ifD cout << sum << endl;
+    sum += min(c[1], c[2]);
+    ifD cout << sum << endl;
+    int temp = c[1];
+    c[1] -= c[2];
+    c[2] -= temp;
+    if (c[1] > 0) sum += c[1]/3;
+    ifD F0R(i, 3) cout << c[i] << " ";
+    if (c[2] > 0) sum += c[2]/3;
+    cout << sum << endl;
 }
 
 signed main() {
-    ios::sync_with_stdio(0); cin.tie(0); solve(0);
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t; rep(t) solve(_+1);
 }

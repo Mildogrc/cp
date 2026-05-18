@@ -36,31 +36,25 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
-
-const int MOD = 32768;
-
-int times_2_ans(int x) {
-    int c;
-    if (!x) return 0;
-    for (c = 0; x != 0;c++) x = (x*2)%MOD;
-    return c;
-}
-
-int solve1(int x) {
-    int mn = times_2_ans(x);
-    F0R(i, 20) mn = min(mn, times_2_ans((x+i)%MOD) + i);
-    return mn;
-}
-
+ 
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n ;
-    vi a(n); F0R(i, n) cin >> a[i];
-    F0R(i, n) cout << solve1(a[i]) << " "; cout << endl;
-}
+    int n, x1, x2, k;
+    cin >> n >> x1 >> x2 >> k;
 
+    if (n <= 3) {
+        cout << 1 << endl;
+        return;
+    }
+ 
+    int dist = abs(x2-x1);
+    dist = min(dist, n-dist);
+    cout << dist+k << endl;
+ 
+}
+ 
 signed main() {
-    ios::sync_with_stdio(0); cin.tie(0); solve(0);
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t; rep(t) solve(_+1);
 }

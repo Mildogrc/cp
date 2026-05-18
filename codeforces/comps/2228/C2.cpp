@@ -39,28 +39,33 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define int long long
 // #define double long double
 
-const int MOD = 32768;
-
-int times_2_ans(int x) {
-    int c;
-    if (!x) return 0;
-    for (c = 0; x != 0;c++) x = (x*2)%MOD;
-    return c;
+int all_digits(string s, set<int> ds) {
+    F0R(i, s.length()) if (!ds.contains(s[i]-'0')) return 0; return 1;
 }
 
-int solve1(int x) {
-    int mn = times_2_ans(x);
-    F0R(i, 20) mn = min(mn, times_2_ans((x+i)%MOD) + i);
-    return mn;
+void make_min(string s, vi ds) {
+
 }
+
 
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n ;
-    vi a(n); F0R(i, n) cin >> a[i];
-    F0R(i, n) cout << solve1(a[i]) << " "; cout << endl;
+    string a;
+    int n;
+    cin >> a >> n;
+
+    vi d(n); F0R(i, n) cin >> d[i];
+    set<int> ds; F0R(i, n) ds.insert(d[i]);
+
+    if (all_digits(a, ds)) {
+        cout << 0 << endl;
+        return;
+    }
+    if (n == 1 && d[0] == 0) {
+        
+    }
 }
 
 signed main() {
-    ios::sync_with_stdio(0); cin.tie(0); solve(0);
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t; rep(t) solve(_+1);
 }
