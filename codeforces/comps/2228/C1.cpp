@@ -36,7 +36,7 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
 
 string build_lower(string a, set<int>& d, int mxint) {
