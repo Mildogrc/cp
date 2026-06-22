@@ -40,11 +40,11 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define double long double
 
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-    srt(a);
-    cout << (a[n-1]+1-a[0]) << endl;
+    int n, k = 0, m;
+    cin >> n >> k >> m;
+    n += (m+1)/2;
+    k += m/2;
+    cout << (n > k ? "First\n" : "Second\n");
 }
 
 signed main() {

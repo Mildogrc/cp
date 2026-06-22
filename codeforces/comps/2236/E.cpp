@@ -40,11 +40,35 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define double long double
 
 void solve(int tc) {
-    int n, k = 0;
+    int n, k = 0, INF = 1e9;
     cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-    srt(a);
-    cout << (a[n-1]+1-a[0]) << endl;
+    vi a(n + 1), seen(n + 1, 0); F0R(i, n) cin >> a[i+1];
+    V<vi> mns(n + 2, vi(n + 2, INF)), mxs(n + 2, vi(n + 2, -INF));
+    FOR(l, 1, n+1) {
+        int mn = INF, mx = -INF;
+        FOR(r, l, n+1) {
+            int v = a[r];
+            if (seen[v] == l) break;
+            seen[v] = l;
+            mn = min(mn, v);
+            mx = max(mx, v);
+            int len = r - l + 1;
+            if (mx - mn + 1 == len) {
+                mns[len][mn] = min(mns[len][mn], l);
+                mxs[len][mn] = max(mxs[len][mn], l);
+            }
+        }
+    }
+    int ans = 0;
+    for (int L = 1; 2 * L <= n; L++) {
+        for (int x = 1; x + 2 * L - 1 <= n; x++) {
+            int y = x + L;
+            if (mns[L][x] == INF) continue;
+            if (mns[L][y] == INF) continue;
+            if (mns[L][x] + L - 1 < mxs[L][y] || mns[L][y] + L - 1 < mxs[L][x]) ans = max(ans, L);
+        }
+    }
+    cout << ans << endl;
 }
 
 signed main() {

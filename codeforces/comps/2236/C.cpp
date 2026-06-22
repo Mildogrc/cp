@@ -17,10 +17,10 @@ using namespace std;
 #define each(a, x) for (auto &a : x)
 #define eachp(u, v, x) for (auto &[u, v] : x)
 #define bg(x) begin(x)
-#define all(x) bg(x), end(x)
-#define rall(x) rbegin(x), rend(x)
-#define srt(x) sort(all(x))
-#define rsrt(x) sort(rall(x))
+#define aint(x) bg(x), end(x)
+#define raint(x) rbegin(x), rend(x)
+#define srt(x) sort(aint(x))
+#define rsrt(x) sort(raint(x))
 #define ft front
 #define bk back
 #if DEBUG
@@ -36,15 +36,28 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
 
+V<pii> get_states(int n, int x) {
+    V<pii> v;
+    int c = 0;
+    while (1) {
+        v.pb(mp(n, c));
+        if (n == 0) break;
+        n /= x;
+        c++;
+    }
+    return v;
+}
+
 void solve(int tc) {
-    int n, k = 0;
-    cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-    srt(a);
-    cout << (a[n-1]+1-a[0]) << endl;
+    int a, b, x;
+    cin >> a >> b >> x;
+    V<pii> va = get_states(a, x), vb = get_states(b, x);
+    int mx = 64;
+    eachp(da, ca, va) eachp(db, cb, vb) mx = min(mx, ca + cb + abs(da-db));
+    cout << mx << '\n';
 }
 
 signed main() {

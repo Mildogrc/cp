@@ -42,9 +42,7 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 void solve(int tc) {
     int n, k = 0;
     cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-    srt(a);
-    cout << (a[n-1]+1-a[0]) << endl;
+    cout << (n%3!=0 ? "First\n" : "Second\n");
 }
 
 signed main() {
