@@ -36,14 +36,45 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
+
+int count(string &a, string &b, int n, int p1 = 0, int p2 = 0) {
+    int sum = 0;
+    while (p1 < n && p2 < n) {
+        if (a[p1] == '1' && b[p2] == '1') {
+            sum += abs(p1-p2);
+            p1 += 2;
+            p2 += 2;
+        } else {
+            if (a[p1] == '0') p1 += 2;
+            if (b[p2] == '0') p2 += 2;
+        }
+    }
+    ifD cout << a << "-" << p1 << ": " << sum << endl;
+    return sum;
+}
 
 void solve(int tc) {
     int n, k = 0;
     cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-
+    string a, b;
+    cin >> a >> b;
+    int ae = 0, ao = 0, be = 0, bo = 0;
+    for(int i = 0; i < n; i += 2) {
+        ae += a[i]-'0';
+        be += b[i]-'0';
+    }
+    for(int i = 1; i < n; i += 2) {
+        ao += a[i]-'0';
+        bo += b[i]-'0';
+    }
+    ifD cout << ae << " " << ao << " " << be << " " << bo << ": ";
+    if (ae == be && ao == bo) {
+        cout << (count(a, b, n) + count(a, b, n, 1, 1))/2 << endl;
+    } else {
+        cout << -1 << endl;
+    }
 }
 
 signed main() {

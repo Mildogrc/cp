@@ -36,14 +36,48 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
+
+void print_heap(minheap<int> m) {
+    while (m.size() > 0) cout << poptop(m) << " "; cout << endl;
+}
 
 void solve(int tc) {
     int n, k = 0;
     cin >> n;
     vi a(n); F0R(i, n) cin >> a[i];
 
+    minheap<int> p;
+    multiset<int> s;
+    F0R(i, n) {
+        if (a[i] > 0) p.push(a[i]); 
+        else s.insert(a[i]);
+    }
+    vi ans;
+    int z = 0;
+    while (p.size() > 0 && s.size() > 0) {
+        auto it = s.upper_bound(-z);
+        if (it == s.end()) {
+            z += poptop(p);
+        } else {
+            z += *it;
+            s.erase(it);
+        }
+        ans.pb(z);
+    }
+    while (p.size() > 0) {
+        z += poptop(p);
+        ans.pb(z);
+    }
+    while (s.size() > 0) {
+        auto it = s.upper_bound(-z);
+        if (it == s.end()) { cout << "-1\n"; return; }
+        z += *it;
+        s.erase(it);
+        ans.pb(z);
+    }
+    F0R(i, n) cout << ans[i] << " \n"[i==n-1];
 }
 
 signed main() {

@@ -42,8 +42,19 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 void solve(int tc) {
     int n, k = 0;
     cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
-
+    string a, b;
+    cin >> a >> b;
+    int ae = 0, ao = 0, be = 0, bo = 0;
+    for(int i = 0; i < n; i += 2) {
+        ae += a[i]-'0';
+        be += b[i]-'0';
+    }
+    for(int i = 1; i < n; i += 2) {
+        ao += a[i]-'0';
+        bo += b[i]-'0';
+    }
+    ifD cout << ae << " " << ao << " " << be << " " << bo << ": ";
+    cout << ((ae == be && ao == bo) ? "Yes\n" : "No\n");
 }
 
 signed main() {

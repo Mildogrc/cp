@@ -40,9 +40,18 @@ constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
 // #define double long double
 
 void solve(int tc) {
-    int n, k = 0;
+    int n, k = 1;
     cin >> n;
-    vi a(n); F0R(i, n) cin >> a[i];
+    string s;
+    cin >> s;
+
+    F0R(i, n-1) if (s[i+1] != s[i]) k++;
+    int x = 0;
+    FOR(i, 1, n-1) {
+        if (s[i-1] == s[i+1] && s[i] != s[i-1]) x = 2;
+        else if (s[i-1] != s[i+1] && s[i] != s[i-1] && s[i] != s[i+1]) x = max(x, 1);
+    }
+    cout << k-x << endl;
 
 }
 

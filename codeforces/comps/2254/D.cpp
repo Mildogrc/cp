@@ -36,14 +36,46 @@ template<class T> auto poptop(T& x){auto v=x.top();x.pop();return v;}
 template<class T> auto popq(T& x){auto v=x.front();x.pop();return v;}
 constexpr int pct(int x) { return __builtin_popcount(x); }
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }
-// #define int long long
+#define int long long
 // #define double long double
 
 void solve(int tc) {
     int n, k = 0;
     cin >> n;
     vi a(n); F0R(i, n) cin >> a[i];
+    int min_to_check = a[0];
+    F0R(i, n) min_to_check = min(min_to_check, a[i]);
+    if (min_to_check != 0) {
+        cout << "-1\n";
+        return;
+    }
 
+    map<int, int> m, m2;
+    F0R(i, n) m[a[i]]++;
+    int px = -1, pc = -1, sum = 0, mx = 0;
+    eachp(x, c, m) {
+        if (px != -1) {
+            int f = 0, diff = x - px;
+            if (diff%pc != 0) f = 1;
+            int t = diff/pc;
+            if (t < mx) f = 1;
+            if (f) { cout << "-1\n"; return; }
+            m2[px] = t;
+            sum += x;
+            mx = t;
+        }
+        px = x;
+        pc = c;
+        // ifD cout << x << ": " << c << endl;
+    }
+    // ifD cout << px << " " << pc << " " << mx << endl;
+    m2[px] = mx+1;
+    // ifD cout << "m2: \n";
+    // eachp(x, c, m2) {
+    //     ifD cout << x << ": " << c << endl;
+    // }
+    // ifD cout << "---------------------------\n";
+    F0R(i, n) cout << m2[a[i]] << " \n"[i==n-1];
 }
 
 signed main() {
