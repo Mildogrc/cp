@@ -58,7 +58,7 @@ void solve(int tc) {
             int f = 0, diff = x - px;
             if (diff%pc != 0) f = 1;
             int t = diff/pc;
-            if (t < mx) f = 1;
+            if (t <= mx) f = 1;
             if (f) { cout << "-1\n"; return; }
             m2[px] = t;
             sum += x;
